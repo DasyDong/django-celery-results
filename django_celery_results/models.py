@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from celery import states
-from django.utils.encoding import python_2_unicode_compatible
+from celery.five import python_2_unicode_compatible
 
 from . import managers
 
@@ -37,7 +37,9 @@ class TaskResult(models.Model):
     traceback = models.TextField(_('traceback'), blank=True, null=True)
     hidden = models.BooleanField(editable=False, default=False, db_index=True)
     meta = models.TextField(null=True, default=None, editable=False)
-
+    task_name = models.CharField(_('task name'), blank=True, default='', max_length=255)
+    task_args = models.TextField(_('task arguments'), blank=True, default='')
+    task_kwargs = models.TextField(_('task keyword arguments'), blank=True, default='')
     objects = managers.TaskResultManager()
 
     class Meta:

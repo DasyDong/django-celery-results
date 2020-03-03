@@ -86,7 +86,8 @@ class TaskResultManager(models.Manager):
     @transaction_retry(max_retries=2)
     def store_result(self, content_type, content_encoding,
                      task_id, result, status,
-                     traceback=None, meta=None):
+                     task_name='', task_args='', task_kwargs='',
+                     traceback=None, meta=None,):
         """Store the result and status of a task.
 
         Arguments:
@@ -97,6 +98,9 @@ class TaskResultManager(models.Manager):
                 or an exception instance raised by the task.
             status (str): Task status.  See :mod:`celery.states` for a list of
                 possible status values.
+            task_name (str): name of task.
+            task_args (str): arguments of task.
+            task_kwargs (str): keyword arguments of task.
 
         Keyword Arguments:
             traceback (str): The traceback string taken at the point of
@@ -115,6 +119,9 @@ class TaskResultManager(models.Manager):
             'meta': meta,
             'content_encoding': content_encoding,
             'content_type': content_type,
+            'task_name': task_name,
+            'task_args': task_args,
+            'task_kwargs': task_kwargs
         }
         obj, created = self.get_or_create(task_id=task_id, defaults=fields)
         if not created:
